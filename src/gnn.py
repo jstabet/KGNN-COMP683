@@ -189,12 +189,12 @@ for fold, (train_idx, test_idx) in enumerate(
     test_df  = data.iloc[test_idx].reset_index(drop=True)
     mu_feat  = train_df[feature_cols].mean()
     sd_feat  = train_df[feature_cols].std().replace(0,1)
-    y_mean   = train_df['viability'].mean()
+    # y_mean   = train_df['viability'].mean()
 
     def prep(df):
         df = df.copy()
         df[feature_cols] = (df[feature_cols] - mu_feat) / sd_feat
-        df['viability']  = df['viability'] - y_mean
+        # df['viability']  = df['viability'] - y_mean
         return df
 
     train_df, test_df = prep(train_df), prep(test_df)
@@ -270,8 +270,8 @@ for fold, (train_idx, test_idx) in enumerate(
             out   = model(batch.x, batch.edge_index, batch.batch)
             y_pred.append(out.cpu().numpy())
             y_true.append(batch.y.cpu().numpy())
-    y_true = np.concatenate(y_true) + y_mean
-    y_pred = np.concatenate(y_pred) + y_mean
+    y_true = np.concatenate(y_true) #+ y_mean
+    y_pred = np.concatenate(y_pred) #+ y_mean
     fold_r2 = r2_score(y_true, y_pred)
     print(f"Fold {fold} R² = {fold_r2:.4f}")
     r2_scores.append(fold_r2)
@@ -290,14 +290,14 @@ epochs    = np.arange(1, train_arr.shape[1]+1)
 mean_tr   = train_arr.mean(0); std_tr = train_arr.std(0)
 mean_va   = val_arr.mean(0);   std_va = val_arr.std(0)
 
-plt.figure(figsize=(6,4))
-plt.plot(epochs, mean_tr, label='Train MSE')
-plt.fill_between(epochs, mean_tr-std_tr, mean_tr+std_tr, alpha=0.3)
-plt.plot(epochs, mean_va, label='Val MSE')
-plt.fill_between(epochs, mean_va-std_va, mean_va+std_va, alpha=0.3)
-plt.xlabel('Epoch'); plt.ylabel('MSE')
-plt.title('Aggregated Train/Val Loss Across 10-Fold CV')
-plt.legend(); plt.tight_layout(); plt.show()
+# plt.figure(figsize=(6,4))
+# plt.plot(epochs, mean_tr, label='Train MSE')
+# plt.fill_between(epochs, mean_tr-std_tr, mean_tr+std_tr, alpha=0.3)
+# plt.plot(epochs, mean_va, label='Val MSE')
+# plt.fill_between(epochs, mean_va-std_va, mean_va+std_va, alpha=0.3)
+# plt.xlabel('Epoch'); plt.ylabel('MSE')
+# plt.title('Aggregated Train/Val Loss Across 10-Fold CV')
+# plt.legend(); plt.tight_layout(); plt.show()
 
 
 # %%

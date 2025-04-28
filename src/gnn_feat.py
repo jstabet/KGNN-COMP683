@@ -251,16 +251,16 @@ for fold, (train_idx, test_idx) in enumerate(
     sd_feat = train_df[feature_cols].std().replace(0,1)
 
     # compute target standardization params
-    y_mean = train_df['viability'].mean()
-    y_std  = train_df['viability'].std()
-    if y_std == 0 or np.isnan(y_std):
-        y_std = 1.0
+    # y_mean = train_df['viability'].mean()
+    # y_std  = train_df['viability'].std()
+    # if y_std == 0 or np.isnan(y_std):
+        # y_std = 1.0
 
 
     def prep(df):
         df = df.copy()
         df[feature_cols] = (df[feature_cols] - mu_feat) / sd_feat
-        df['viability']  = (df['viability'] - y_mean) / y_std
+        # df['viability']  = (df['viability'] - y_mean) / y_std
         return df
 
     train_df, test_df = prep(train_df), prep(test_df)
@@ -339,8 +339,8 @@ for fold, (train_idx, test_idx) in enumerate(
                         batch.drug_idx, batch.cell_idx)
             y_pred.append(out.cpu().numpy())
             y_true.append(batch.y.cpu().numpy())
-    y_true = np.concatenate(y_true) * y_std + y_mean
-    y_pred = np.concatenate(y_pred) * y_std + y_mean
+    y_true = np.concatenate(y_true) #* y_std + y_mean
+    y_pred = np.concatenate(y_pred) #* y_std + y_mean
 
     fold_r2 = r2_score(y_true, y_pred)
     print(f"Fold {fold} R² = {fold_r2:.4f}")
@@ -360,14 +360,14 @@ epochs    = np.arange(1, train_arr.shape[1]+1)
 mean_tr   = train_arr.mean(0); std_tr = train_arr.std(0)
 mean_va   = val_arr.mean(0);   std_va = val_arr.std(0)
 
-plt.figure(figsize=(6,4))
-plt.plot(epochs, mean_tr, label='Train MSE (std)')
-plt.fill_between(epochs, mean_tr-std_tr, mean_tr+std_tr, alpha=0.3)
-plt.plot(epochs, mean_va, label='Val MSE (std)')
-plt.fill_between(epochs, mean_va-std_va, mean_va+std_va, alpha=0.3)
-plt.xlabel('Epoch'); plt.ylabel('Standardized MSE')
-plt.title('Aggregated Train/Val Loss Across 10-Fold CV')
-plt.legend(); plt.tight_layout(); plt.show()
+# plt.figure(figsize=(6,4))
+# plt.plot(epochs, mean_tr, label='Train MSE (std)')
+# plt.fill_between(epochs, mean_tr-std_tr, mean_tr+std_tr, alpha=0.3)
+# plt.plot(epochs, mean_va, label='Val MSE (std)')
+# plt.fill_between(epochs, mean_va-std_va, mean_va+std_va, alpha=0.3)
+# plt.xlabel('Epoch'); plt.ylabel('Standardized MSE')
+# plt.title('Aggregated Train/Val Loss Across 10-Fold CV')
+# plt.legend(); plt.tight_layout(); plt.show()
 
 
 # %%
